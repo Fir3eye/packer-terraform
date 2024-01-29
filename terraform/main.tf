@@ -4,9 +4,9 @@ provider "aws" {
 
 
 resource "aws_instance" "windows_server" {
-  ami           = "ami-0375b838a25b00955" # Replace this with the actual AMI ID
+  ami           = "your_ami_id" # Replace this with the actual AMI ID
   instance_type = "t2.micro" # Choose an appropriate instance type
-  key_name      = "mum"
+  key_name      = "your_key"
   tags = {
     Name = "WindowsServer"
   }
