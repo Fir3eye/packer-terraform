@@ -1,0 +1,57 @@
+---
+- name: Manage windows servers
+  hosts: win
+  tasks:
+
+  - name: Create directory structure
+    win_file:
+      path: C:\Temp\folder
+      state: directory
+
+  - name: Touch a file (creates if not present, updates modification time if present)
+    win_file:
+      path: C:\Temp\folder\foo.txt
+      state: touch
+
+  - name: Create a file from a Jinja2 template
+    win_template:
+      src: foo.txt.j2
+      dest: C:\temp\folder\foo.txt
+
+  - win_stat:
+      path: C:\temp\folder\foo.txt
+      get_checksum: yes
+      checksum_algorithm: md5
+    register: md5_checksum
+
+  - debug:
+      var: md5_checksum.stat.checksum
+
+  - name: test powershell
+    win_shell: |
+              get-host
+    register: result_get_host
+
+  - name: display result_get_host
+    debug:
+      var: result_get_host
+
+  - name: add directory for Nginx
+    win_file:
+      path: C:\nginx
+      state: directory
+
+  - name: Download Nginx
+    win_get_url:
+      url: https://nginx.org/download/nginx-1.20.1.zip # Update URL to the latest version
+      dest: C:\nginx\nginx.zip
+      force: true
+
+  - name: Unzip Nginx
+    win_unzip:
+      src: C:\nginx\nginx.zip
+      dest: C:\nginx
+      creates: C:\nginx\nginx-1.20.1
+
+  - name: Start Nginx
+    win_shell: Start-Process -NoNewWindow -FilePath "C:\nginx\nginx-1.20.1\nginx.exe"
